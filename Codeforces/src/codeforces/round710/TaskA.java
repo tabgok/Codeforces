@@ -3,7 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package codeforces;
+
+package codeforces.round710;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -14,8 +15,11 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.StringTokenizer;
 
-public class Template {
-    public static void main(String[] args) {
+/**
+ *
+ */
+public class TaskA {
+public static void main(String[] args) {
         InputStream inputStream;
         String str = null;
         if(str == null){
@@ -35,7 +39,24 @@ public class Template {
 
     static class Solver {
         public void solve(int testNumber, InputReader in, PrintWriter out) {
+            String pos = in.next();
+            int col = pos.charAt(0)-'a';
+            int row = pos.charAt(1) - '1';
+            int moves = 8;
             
+            if(row == 0 || row == 7){
+                moves -= 3;
+            }
+            
+            if(col == 0 || col == 7){
+                moves -= 3;
+            }
+            
+            if( (row==0||row==7) && (col==0||col==7)){
+                moves += 1;
+            }
+            
+            System.out.println(moves);
         }
     }
     

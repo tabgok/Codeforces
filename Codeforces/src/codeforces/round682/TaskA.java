@@ -3,7 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package codeforces;
+
+package codeforces.round682;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -14,7 +15,10 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.StringTokenizer;
 
-public class Template {
+/**
+ *
+ */
+public class TaskA {
     public static void main(String[] args) {
         InputStream inputStream;
         String str = null;
@@ -35,7 +39,22 @@ public class Template {
 
     static class Solver {
         public void solve(int testNumber, InputReader in, PrintWriter out) {
+            long n = in.nextInt();
+            long m = in.nextInt();
             
+            long sum = 5*(n/5)*(m/5) + (n%5)*(m/5) + (m%5)*(n/5);
+            
+            
+            for(int i=1;i<=n%5;i++){
+                for(int j=1;j<=m%5;j++){
+                    if( (i+j)%5 == 0){
+                        sum++;
+                    }
+                }
+            }
+            
+            
+            System.out.println(sum);
         }
     }
     
