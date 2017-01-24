@@ -39,18 +39,19 @@ public class TaskB {
 
     static class Solver {
         public void solve(int testNumber, InputReader in, PrintWriter out) {
-            int x = in.nextInt();
-            int y = in.nextInt();
+            long x = in.nextInt();
+            long y = in.nextInt();
             
-            int n = in.nextInt();
+            long n = in.nextInt();
             
-            int[] results = {x,y,y-x,-x,-y,x-y};
+            long[] results = {x,y,y-x,-x,-y,x-y};
             
-            if(results[(n-1)%6] < 0){
-                System.out.println(1000000007+results[(n-1)%6]);
-            }else{
-                System.out.println(results[(n-1)%6]%1000000007);
+            int index= (int)((n-1)%6L);
+
+            while(results[index] < 0){
+                results[index]+=1000000007;
             }
+                System.out.println(results[index]%1000000007);
             
         }
     }
