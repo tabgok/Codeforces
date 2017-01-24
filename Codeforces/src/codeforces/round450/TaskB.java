@@ -21,7 +21,8 @@ import java.util.StringTokenizer;
 public class TaskB {
     public static void main(String[] args) {
         InputStream inputStream;
-        String str = null;
+        String str = "-861439463 974126967\n" +
+"349411083";
         if(str == null){
             inputStream = System.in;
         }else{
@@ -49,7 +50,7 @@ public class TaskB {
             if(results[(n-1)%6] < 0){
                 System.out.println(1000000007+results[(n-1)%6]);
             }else{
-                System.out.println(results[(n-1)%6]);
+                System.out.println(results[(n-1)%6]%1000000007);
             }
             
         }
