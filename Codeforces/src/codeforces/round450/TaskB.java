@@ -21,8 +21,7 @@ import java.util.StringTokenizer;
 public class TaskB {
     public static void main(String[] args) {
         InputStream inputStream;
-        String str = "-861439463 974126967\n" +
-"349411083";
+        String str = null;
         if(str == null){
             inputStream = System.in;
         }else{
