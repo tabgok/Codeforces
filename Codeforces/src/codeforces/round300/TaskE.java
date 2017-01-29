@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package codeforces;
 
+package codeforces.round300;
+
+import codeforces.round300.TaskA.InputReader;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -12,11 +14,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
+import java.math.BigInteger;
 import java.util.StringTokenizer;
 
-public class Template {
-    public static void main(String[] args) {
+/**
+ *
+ */
+public class TaskE {
+        public static void main(String[] args) {
         InputStream inputStream;
         String str = null;
         if(str == null){
@@ -36,7 +41,7 @@ public class Template {
 
     static class Solver {
         public void solve(int testNumber, InputReader in, PrintWriter out) {
-            
+
         }
     }
     

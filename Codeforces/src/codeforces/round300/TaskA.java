@@ -3,7 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package codeforces;
+
+package codeforces.round300;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -13,9 +14,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.StringTokenizer;
 
-public class Template {
+/**
+ *
+ */
+public class TaskA {
     public static void main(String[] args) {
         InputStream inputStream;
         String str = null;
@@ -36,7 +41,47 @@ public class Template {
 
     static class Solver {
         public void solve(int testNumber, InputReader in, PrintWriter out) {
+            int size = in.nextInt();
+            LinkedList<Integer> negs = new LinkedList<>();
+            LinkedList<Integer> pos = new LinkedList<>();
+            LinkedList<Integer> zeros = new LinkedList<>();
+            zeros.add(0);
             
+            for(int i=0;i<size;i++){
+                int next = in.nextInt();
+                if(next < 0){
+                    negs.add(next);
+                }else if(next > 0){
+                    pos.add(next);
+                }
+            }
+
+            if(negs.size() >= 3 ){
+                pos.add(negs.removeFirst());
+                pos.add(negs.removeFirst());
+            }
+            
+            if(negs.size()%2 == 0){
+                zeros.add(negs.removeFirst());
+            }
+            
+            System.out.print(negs.size() + " ");
+            for(int i : negs.toArray(new Integer[0])){
+                System.out.print(i+" ");
+            }
+            System.out.println();
+
+            
+            System.out.print(pos.size() + " " );
+            for(int i : pos.toArray(new Integer[0])){
+                System.out.print(i+" ");
+            }
+            System.out.println();
+            System.out.print(zeros.size() + " ");
+            for(int i : zeros.toArray(new Integer[0])){
+                System.out.print(i+" ");
+            }
+            System.out.println();
         }
     }
     
