@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package codeforces.round758;
+package codeforces.round764;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -13,12 +13,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 /**
  *
  */
-public class TaskA {
+public class TaskB {
     public static void main(String[] args) {
         InputStream inputStream;
         String str = null;
@@ -39,25 +40,33 @@ public class TaskA {
 
     static class Solver {
         public void solve(int testNumber, InputReader in, PrintWriter out) {
-            int numCitizens = in.nextInt();
-            
-            int[] citizens = new int[numCitizens];
-            int max = 0;
-            for(int i=0;i<numCitizens;i++){
-                citizens[i] = in.nextInt();
-                max = Math.max(citizens[i], max);
+            int numCubes = in.nextInt();
+            long[] cubes = new long[numCubes];
+            for(int i=0;i<numCubes;i++){
+                cubes[i] = in.nextLong();
             }
             
-            long sum = 0;
-            
-            for(int i=0;i<numCitizens;i++){
-                sum += max-citizens[i];
+            int l = 0;
+            int r = numCubes -1;
+            int step = 0;
+            while(l < r){
+                if(step%2 == 0)
+                    swap(cubes, l, r);
+                step++;
+                l++;
+                r--;
             }
             
-            System.out.println(sum);    
+            Arrays.stream(cubes).forEach(s -> System.out.print(s+" "));
+            System.out.println();
         }
     }
     
+    static void swap(long[] array, int l, int r){
+            long tmp = array[l];
+            array[l] = array[r];
+            array[r] = tmp;
+    }
     static class InputReader {
         public BufferedReader reader;
         public StringTokenizer tokenizer;
@@ -80,6 +89,10 @@ public class TaskA {
  
         public int nextInt() {
             return Integer.parseInt(next());
+        }
+        
+        public long nextLong() {
+            return Long.parseLong(next());
         }
     }
 }

@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package codeforces.round758;
+package codeforces.round764;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -13,12 +13,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.StringTokenizer;
 
 /**
  *
  */
-public class TaskA {
+public class TaskD {
     public static void main(String[] args) {
         InputStream inputStream;
         String str = null;
@@ -39,22 +40,22 @@ public class TaskA {
 
     static class Solver {
         public void solve(int testNumber, InputReader in, PrintWriter out) {
-            int numCitizens = in.nextInt();
-            
-            int[] citizens = new int[numCitizens];
-            int max = 0;
-            for(int i=0;i<numCitizens;i++){
-                citizens[i] = in.nextInt();
-                max = Math.max(citizens[i], max);
+            int numRectangles = in.nextInt();
+            HashMap<Integer, Rectangle> rectangles = new HashMap<>();
+            System.out.println("YES");
+            for(int i=1;i<=numRectangles;i++){
+                int x1 = in.nextInt();
+                int y1 = in.nextInt();
+                int x2 = in.nextInt();
+                int y2 = in.nextInt();
+                
+                Rectangle r = new Rectangle(i, x1,y1,x2,y2);
+                rectangles.put(i,r);
             }
             
-            long sum = 0;
-            
-            for(int i=0;i<numCitizens;i++){
-                sum += max-citizens[i];
+            for(int i=1;i<=numRectangles;i++){
+                System.out.println(rectangles.get(i).color);
             }
-            
-            System.out.println(sum);    
         }
     }
     
@@ -81,5 +82,22 @@ public class TaskA {
         public int nextInt() {
             return Integer.parseInt(next());
         }
+        
+        public long nextLong() {
+            return Long.parseLong(next());
+        }
+    }
+}
+
+class Rectangle{
+    int x1;
+    int x2;
+    int y1;
+    int y2;
+    int color = -1;
+    int id;
+    public Rectangle(int id, int x1, int y1, int x2, int y2){
+        this.id = id;
+        this.color = 2*(Math.abs(x1)%2)+(Math.abs(y1)%2)+1;
     }
 }

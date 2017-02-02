@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package codeforces.round758;
+package codeforces.round764;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -39,22 +39,23 @@ public class TaskA {
 
     static class Solver {
         public void solve(int testNumber, InputReader in, PrintWriter out) {
-            int numCitizens = in.nextInt();
+            int callRate = in.nextInt();
+            int arriveRate = in.nextInt();
+            int dayLength = in.nextInt();
             
-            int[] citizens = new int[numCitizens];
-            int max = 0;
-            for(int i=0;i<numCitizens;i++){
-                citizens[i] = in.nextInt();
-                max = Math.max(citizens[i], max);
+            int killed = 0;
+            
+            int time = callRate;
+            
+            while(time <= dayLength){
+                
+                if(time % arriveRate == 0){
+                    killed++;
+                }
+                time += callRate;
             }
             
-            long sum = 0;
-            
-            for(int i=0;i<numCitizens;i++){
-                sum += max-citizens[i];
-            }
-            
-            System.out.println(sum);    
+            System.out.println(killed);
         }
     }
     
@@ -80,6 +81,10 @@ public class TaskA {
  
         public int nextInt() {
             return Integer.parseInt(next());
+        }
+        
+        public long nextLong() {
+            return Long.parseLong(next());
         }
     }
 }

@@ -18,7 +18,7 @@ import java.util.StringTokenizer;
 /**
  *
  */
-public class TaskA {
+public class TaskD {
     public static void main(String[] args) {
         InputStream inputStream;
         String str = null;
@@ -39,22 +39,7 @@ public class TaskA {
 
     static class Solver {
         public void solve(int testNumber, InputReader in, PrintWriter out) {
-            int numCitizens = in.nextInt();
             
-            int[] citizens = new int[numCitizens];
-            int max = 0;
-            for(int i=0;i<numCitizens;i++){
-                citizens[i] = in.nextInt();
-                max = Math.max(citizens[i], max);
-            }
-            
-            long sum = 0;
-            
-            for(int i=0;i<numCitizens;i++){
-                sum += max-citizens[i];
-            }
-            
-            System.out.println(sum);    
         }
     }
     
