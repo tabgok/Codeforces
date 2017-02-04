@@ -3,7 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package codeforces;
+
+package codeforces.round546;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -12,10 +13,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.StringTokenizer;
 
-public class Template {
-    public static void main(String[] args) {
+/**
+ *
+ */
+public class TaskE {
+public static void main(String[] args) {
         InputStream inputStream;
         String str = null;
         if(str == null){
@@ -35,7 +41,28 @@ public class Template {
 
     static class Solver {
         public void solve(int testNumber, InputReader in, PrintWriter out) {
+            int numCities = in.nextInt();
+            int numRoads = in.nextInt();
+            HashMap<Integer, City> cities = new HashMap<>();
             
+            for(int i=1;i<=numCities;i++){
+                City city = new City(i);
+                city.numWarriors = in.nextInt();
+                cities.put(i, city);
+            }
+            
+            for(int i=1;i<=numCities;i++){
+                cities.get(i).targetWarriors = in.nextInt();
+            }
+            
+            for(int i=0;i<numRoads;i++){
+                int a = in.nextInt();
+                int b = in.nextInt();
+                cities.get(a).edges.add(b);
+                cities.get(b).edges.add(a);
+            }
+            
+           
         }
     }
     
@@ -66,5 +93,17 @@ public class Template {
         public long nextLong() {
             return Long.parseLong(next());
         }
+    }
+}
+
+
+class City{
+    int numWarriors;
+    int targetWarriors;
+    int id;
+    HashSet<Integer> edges = new HashSet<>();
+    
+    public City(int id){
+        this.id = id;
     }
 }

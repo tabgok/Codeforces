@@ -3,7 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package codeforces;
+
+package codeforces.round546;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -14,7 +15,10 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.StringTokenizer;
 
-public class Template {
+/**
+ *
+ */
+public class TaskD {
     public static void main(String[] args) {
         InputStream inputStream;
         String str = null;
@@ -35,7 +39,39 @@ public class Template {
 
     static class Solver {
         public void solve(int testNumber, InputReader in, PrintWriter out) {
+            int numGames = in.nextInt();
+            long[] results = new long[5000001];
+            int[] vals = new int[5000001];
+            for(int i=1;i<5000001;i++){
+                vals[i] = i;
+            }
+            for(int i=2;i<=5000000;i++){
+                if(vals[i] != 1){
+                    for(int d=i;d<results.length;d+=i){
+                        while(vals[d] > 1 && vals[d]%i==0){
+                            vals[d] /= i;
+                            results[d]++;
+                        }
+                    }
+                }
+            }
             
+            for(int i=2;i<=5000000;i++){
+                results[i] = results[i]+results[i-1];
+            }
+            
+            StringBuilder sb = new StringBuilder();
+            
+            for(int game=0;game<numGames;game++){
+                int a = in.nextInt();
+                int b = in.nextInt();
+                long rounds = results[a] - results[b];
+                
+                sb.append(rounds);
+                sb.append("\n");
+            }
+            
+            System.out.println(sb.toString());
         }
     }
     
