@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package codeforces.round546;
+package codeforces.round474;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -13,14 +13,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.StringTokenizer;
 
 /**
  *
  */
-public class TaskE {
+public class TaskD {
     public static void main(String[] args) {
         InputStream inputStream;
         String str = null;
@@ -41,31 +39,49 @@ public class TaskE {
 
     static class Solver {
         public void solve(int testNumber, InputReader in, PrintWriter out) {
-            int numCities = in.nextInt();
-            int numRoads = in.nextInt();
-            HashMap<Integer, City> cities = new HashMap<>();
+            int numTests = in.nextInt();
+            int groupSize = in.nextInt();
             
-            for(int i=1;i<=numCities;i++){
-                City city = new City(i);
-                city.numWarriors = in.nextInt();
-                cities.put(i, city);
+            long[] memo = new long[1000001];
+            
+            for(int i=1;i<groupSize;i++){
+                memo[i] = 1;
+            }
+            memo[groupSize]=2;
+            
+            for(int i=groupSize+1;i<memo.length;i++){
+                memo[i] = memo[i-1] + memo[i-groupSize];
+                
+                //if(i%groupSize == 0){
+                //    memo[i] += (2*(memo[i-groupSize]-2)+1000000007) % 1000000007;
+               //}
+                //if(i<=5){
+                //    System.out.println(i+": " + memo[i]);
+                //}
+                memo[i] = memo[i]%1000000007;
             }
             
-            for(int i=1;i<=numCities;i++){
-                cities.get(i).targetWarriors = in.nextInt();
+            for(int i=1;i<memo.length;i++){
+                memo[i] = (memo[i]+memo[i-1]) % 1000000007;
             }
+            //for(int i=0;i<20;i++){
+            //    System.out.println(i+": " + memo[i]);
+            //}
             
-            for(int i=0;i<numRoads;i++){
+            for(int test=0;test<numTests;test++){
                 int a = in.nextInt();
                 int b = in.nextInt();
-                cities.get(a).edges.add(b);
-                cities.get(b).edges.add(a);
+                //158897762
+                //1000000007
+                //266988
+                //2147483648
+                //    System.out.println(a+ " " + b + " " + memo[a-1] + " " + memo[b]);
+                System.out.println((memo[b]-memo[a-1]+1000000007)%1000000007);
+                
             }
-            
-           
         }
     }
-    
+
     static class InputReader {
         public BufferedReader reader;
         public StringTokenizer tokenizer;
@@ -93,17 +109,5 @@ public class TaskE {
         public long nextLong() {
             return Long.parseLong(next());
         }
-    }
-}
-
-
-class City{
-    int numWarriors;
-    int targetWarriors;
-    int id;
-    HashSet<Integer> edges = new HashSet<>();
-    
-    public City(int id){
-        this.id = id;
     }
 }

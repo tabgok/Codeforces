@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package codeforces.round546;
+package codeforces.round766;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -13,14 +13,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 /**
  *
  */
-public class TaskE {
+public class TaskB {
     public static void main(String[] args) {
         InputStream inputStream;
         String str = null;
@@ -41,28 +40,25 @@ public class TaskE {
 
     static class Solver {
         public void solve(int testNumber, InputReader in, PrintWriter out) {
-            int numCities = in.nextInt();
-            int numRoads = in.nextInt();
-            HashMap<Integer, City> cities = new HashMap<>();
+            int numSegments = in.nextInt();
+            long[]segments= new long[numSegments];
             
-            for(int i=1;i<=numCities;i++){
-                City city = new City(i);
-                city.numWarriors = in.nextInt();
-                cities.put(i, city);
+            for(int i=0;i<numSegments;i++){
+                segments[i] = in.nextInt();
             }
             
-            for(int i=1;i<=numCities;i++){
-                cities.get(i).targetWarriors = in.nextInt();
+            Arrays.sort(segments);
+            for(int i=0;i<numSegments;i++){
+                for(int j=i+1;j<numSegments-1;j++){
+                    long length = segments[i]+segments[j];
+                    if(length > segments[j+1]){
+                        System.out.println("YES");
+                        return;
+
+                    }
+                }
             }
-            
-            for(int i=0;i<numRoads;i++){
-                int a = in.nextInt();
-                int b = in.nextInt();
-                cities.get(a).edges.add(b);
-                cities.get(b).edges.add(a);
-            }
-            
-           
+            System.out.println("NO");
         }
     }
     
@@ -93,17 +89,5 @@ public class TaskE {
         public long nextLong() {
             return Long.parseLong(next());
         }
-    }
-}
-
-
-class City{
-    int numWarriors;
-    int targetWarriors;
-    int id;
-    HashSet<Integer> edges = new HashSet<>();
-    
-    public City(int id){
-        this.id = id;
     }
 }

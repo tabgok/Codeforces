@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package codeforces.round546;
+package codeforces.round414;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -20,7 +20,7 @@ import java.util.StringTokenizer;
 /**
  *
  */
-public class TaskE {
+public class TaskB {
     public static void main(String[] args) {
         InputStream inputStream;
         String str = null;
@@ -41,28 +41,55 @@ public class TaskE {
 
     static class Solver {
         public void solve(int testNumber, InputReader in, PrintWriter out) {
-            int numCities = in.nextInt();
-            int numRoads = in.nextInt();
-            HashMap<Integer, City> cities = new HashMap<>();
+            int maxInt = in.nextInt();
+            int length = in.nextInt();
+            HashMap<Integer, HashSet<Integer>> divisors = new HashMap<>();
+            long[][]results = new long[length+1][maxInt+1];
             
-            for(int i=1;i<=numCities;i++){
-                City city = new City(i);
-                city.numWarriors = in.nextInt();
-                cities.put(i, city);
+            
+            for(int i=1;i<=maxInt;i++){
+                divisors.put(i, new HashSet<>());
+                for(int j=1;j<=i;j++){
+                    if(i%j==0){
+                        divisors.get(i).add(j);
+                    }
+                }
+                
             }
             
-            for(int i=1;i<=numCities;i++){
-                cities.get(i).targetWarriors = in.nextInt();
+            
+            for(int i=1;i<=maxInt;i++){
+                results[1][i] = 1;
             }
             
-            for(int i=0;i<numRoads;i++){
-                int a = in.nextInt();
-                int b = in.nextInt();
-                cities.get(a).edges.add(b);
-                cities.get(b).edges.add(a);
+            for(int l=2;l<=length;l++){
+                for(int c = 1;c<= maxInt;c++){
+                    for(int j=c;j<=maxInt;j+=c){
+                        results[l][j] += results[l-1][c];
+                        results[l][j] %= 1000000007;
+                    }
+                   // for(int d : divisors.get(c)){
+                    //    results[l][c] += results[l-1][d];
+                    //    results[l][c] %= 1000000007;
+                   // }
+                    //results[l][c]++;
+                }
             }
             
-           
+            /*for(int i=0;i<= length;i++){
+                for(int j=0;j<=maxInt;j++){
+                    System.out.print(results[i][j]+" ");
+                }System.out.println();
+            }*/
+            
+            long result = 0;
+            
+            for(int i=0;i<=maxInt;i++){
+                result += results[length][i] ;
+                result %= 1000000007;
+            }
+            
+            System.out.println(result);
         }
     }
     
@@ -93,17 +120,5 @@ public class TaskE {
         public long nextLong() {
             return Long.parseLong(next());
         }
-    }
-}
-
-
-class City{
-    int numWarriors;
-    int targetWarriors;
-    int id;
-    HashSet<Integer> edges = new HashSet<>();
-    
-    public City(int id){
-        this.id = id;
     }
 }
