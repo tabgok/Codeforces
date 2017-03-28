@@ -7,10 +7,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
@@ -39,127 +39,104 @@ public class TaskE {
         public void solve(int testNumber, InputReader in, PrintWriter out) {
             int numPeople = in.nextInt();
             Person[] people = new Person[numPeople+1];
-            int[] idMap= new int[numPeople+1];
-            people[0] = null;
-            boolean print = false;
-            long time = Instant.now().toEpochMilli();
             
+            HashMap<Integer, ArrayList<Integer>> levels = new HashMap<>();
             LinkedList<Person> roots = new LinkedList<>();
             
+            
             for(int i=1;i<=numPeople;i++){
-                people[i] = new Person(i);
-                people[i].max = 1;
+                people[i] = new Person();
+                people[i].index = i;
             }
             
-            for(int i=1;i<=numPeople;i++){ 
-               people[i].setParent(people[in.nextInt()]);
+            for(int i=1;i<=numPeople;i++){
+                people[i].parent = people[in.nextInt()];
+                //if(people[i].parent != null)
+                //System.out.println("Node " + i + " has parent " + people[i].parent.index);
                 if(people[i].parent == null){
                     roots.add(people[i]);
+                }else{
+                    people[i].parent.children.add(people[i]);
                 }
-                
             }
-            print = false && (numPeople == 100000) && 
-                    (people[1].parent == null) && 
-                    (people[2].parent == people[1]) && 
-                    (people[3].parent == people[1]) && 
-                    (people[5].parent == people[3]) && 
-                    (people[4].parent == people[2]);
-            if(print){
-                long time2 = Instant.now().toEpochMilli();
-                System.out.println(time2-time);
-                time = time2;
-            }
-            int counter = 0;
-            LinkedList<Person> toVisit = new LinkedList<>();
-            ArrayList<ArrayList<Integer>> heights = new ArrayList<>();
             
-            for(Person p : roots){
-                toVisit.add(p);
-                p.height = 0;
+            //preprocess
+            int counter = 1;
+            HashMap<Integer, Person> origIDtoNewID  = new HashMap<>();
+            for(Person root : roots){
+                LinkedList<Person> toVisit = new LinkedList<>();
                 HashSet<Person> visited = new HashSet<>();
+                toVisit.add(root);
+                //System.out.println("Starting");
                 while(!toVisit.isEmpty()){
+                    
                     Person current = toVisit.getFirst();
                     if(visited.contains(current)){
-                        toVisit.removeFirst();
-                        if(current.parent != null){
-                            current.parent.max += current.max;
+                        if(current.children.isEmpty()){
+                            toVisit.remove(current);
+                            if(current.parent!=null){
+                                current.parent.maxChild = Math.max(current.ID, current.maxChild);
+                                //System.out.println(current.index+" " + current.parent.maxChild);
+                            }
+                        }else{
+                            toVisit.addFirst(current.children.removeFirst());
                         }
-                        continue;
+                    }else{
+                        current.ID = counter++;
+                        current.maxChild = current.ID;
+                        origIDtoNewID.put(current.ID, current);
+                        //System.out.println("Mapping: " + current.index + " to "+ current.ID);
+                        visited.add(current);
+                        if(current.parent != null){
+                            current.height = current.parent.height+1;
+                        }
+                        if(!levels.containsKey(current.height)){
+                            levels.put(current.height, new ArrayList<>());
+                        }
+                        levels.get(current.height).add(current.ID);
                     }
-                    if(current.parent!=null){
-                        current.height = current.parent.height+1;
-                    }
-                    visited.add(current);
-                    if(heights.size() <= current.height){
-                        heights.add(new ArrayList<>());
-                    }
-                    idMap[counter] = current.ID;
-                    current.ID = counter++;
-                    
-                    heights.get(current.height).add(current.ID);
-                    
-                    toVisit.addAll(0,current.children);
-                    
                 }
             }
             
-            //Arrays.stream(idMap).forEach(s -> System.out.print(s+" "));System.out.println();
-            if(print){
-                long time2 = Instant.now().toEpochMilli();
-                System.out.println(time2-time);
-                time = time2;
-            }
-            int questions = in.nextInt();
-            StringBuilder sb = new StringBuilder();
-            for(int question=0;question<questions;question++){
-                int index = in.nextInt();
-                Person person = people[index];
+            int numQueries = in.nextInt();
+            
+            StringBuilder answers = new StringBuilder();
+            for(int query=0;query<numQueries;query++){
+                Person target = people[in.nextInt()];
                 int level = in.nextInt();
-                //System.out.println("level: " + level + " vs " + person.height);
-                if(level > person.height){
-                    sb.append("0 ");
+                
+                //System.out.println(query+": looking at node " + target.index + " parent is " + (target.parent == null ? null : target.parent.index));
+                if(level > target.height){
+                    answers.append(0+" ");
                     continue;
                 }
-                if(print && question%10000 == 0){
-                    long time2 = Instant.now().toEpochMilli();
-                    System.out.println(question+": " + (time2-time));
-                    time = time2;
-                }
                 
-                //int i;
-                //for(i=0;i<level && person != null;i++){
-                //    person = person.parent;
-                //}
-                index = Collections.binarySearch(heights.get(person.height-level), person.ID);
-                //System.out.println("index: " + index);
-                if(index < 0){
-                    index = (index+1)*-1-1;
-                }else{
-                    index++;
-                }
-                //System.out.print(person.ID+" ");
-                person = people[idMap[heights.get(person.height-level).get(index)]];
-                //System.out.println(person.ID);
-                level = person.height+level;
+                //System.out.println("Searching: " + target.ID);
+                int parentIndex = levels.get(target.height-level).get((Collections.binarySearch(levels.get(target.height-level), target.ID)+1)*-1-1);
+                //System.out.println(levels.get(target.height-level));
+                //System.out.println(parentIndex+" is parent");
+                Person parent = people[origIDtoNewID.get(parentIndex).index];
                 
-                int l = person.ID;
-                int r = person.ID+person.max+1;
+                int left = parent.ID;
+                int right = parent.maxChild+1;
                 
+                int l = Collections.binarySearch(levels.get(target.height), left);
+                int r = Collections.binarySearch(levels.get(target.height), right);
+                //System.out.println(left + " "+ right + " -> " + l + " " +r + " " + levels.get(target.height));
                 
-                int left = Collections.binarySearch(heights.get(level), l);
-                int right = Collections.binarySearch(heights.get(level), r);
-
-                if(left < 0){
-                    left = (left+1)*-1;
+                if(l < 0){
+                    l = (l+1)*-1;
                 }
-                if(right < 0){
-                    right = (right+1)*-1;
+                if(r < 0){
+                    r = (r+1)*-1;
                 }
-               sb.append(Math.max(0,right-left-1));
-               sb.append(" ");
+                //System.out.println(left + " "+ right + " -> " + l + " " +r);
+                //System.out.println();
+                answers.append(r-l-1);
+                answers.append(" ");
             }
             
-            System.out.println(sb);
+            System.out.println(answers);
         }
     }
     
@@ -193,22 +170,11 @@ public class TaskE {
     }
 }
 
-
 class Person{
-    int ID;
-    int height;
-    int max=0;
     Person parent;
     LinkedList<Person> children = new LinkedList<>();
-    public Person(int ID){
-        this.ID = ID;
-    }
-    
-    public void setParent(Person p){
-        parent = p;
-        if(parent != null){
-            parent.children.add(this);
-        }
-        
-    }
+    int ID;
+    int index;
+    int height = 0;
+    int maxChild = 0;
 }
