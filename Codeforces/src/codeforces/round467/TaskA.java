@@ -7,11 +7,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.StringTokenizer;
 
 
-public class TaskC {
+public class TaskA {
     public static void main(String[] args) {
         InputStream inputStream;
         String str = null;
@@ -32,36 +31,17 @@ public class TaskC {
 
     static class Solver {
         public void solve(int testNumber, InputReader in, PrintWriter out) {
-            int numValues = in.nextInt();
-            int segmentSize = in.nextInt();
-            int numPairs = in.nextInt();
+            int numRooms = in.nextInt();
+            int countRooms = 0;
             
-            long[] values = new long[numValues+1];
-            
-            for(int i=1;i<=numValues;i++){
-                values[i] = in.nextLong();
-            }
-            
-            long[][]maxValues = new long[numPairs+1][numValues+1];
-            
-            for(int k=1;k<=numPairs;k++){
-                long rollingSum = 0;
-                for(int i=1;i<segmentSize;i++){
-                    rollingSum += values[i];
+            for(int room=0;room<numRooms;room++){
+                int numPeople = in.nextInt();
+                int capacity = in.nextInt();
+                if(capacity-numPeople >= 2){
+                    countRooms++;
                 }
-                
-                for(int i=segmentSize;i<=numValues;i++){
-                    rollingSum += values[i];
-                    maxValues[k][i] = Math.max(rollingSum + maxValues[k-1][i-segmentSize], maxValues[k][i-1]);
-                    rollingSum -= values[i-segmentSize+1];
-                }
-                
-                //System.out.print(k+": ");
-                //Arrays.stream(maxValues[k]).forEach(s -> System.out.print(s+" "));
-                //System.out.println();
             }
-            
-            System.out.println(maxValues[numPairs][numValues]);
+            System.out.println(countRooms);
         }
     }
     

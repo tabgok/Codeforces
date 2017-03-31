@@ -7,11 +7,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.StringTokenizer;
 
 
-public class TaskC {
+public class TaskB {
     public static void main(String[] args) {
         InputStream inputStream;
         String str = null;
@@ -32,37 +31,39 @@ public class TaskC {
 
     static class Solver {
         public void solve(int testNumber, InputReader in, PrintWriter out) {
-            int numValues = in.nextInt();
-            int segmentSize = in.nextInt();
-            int numPairs = in.nextInt();
+            int types = in.nextInt();
+            int opponents = in.nextInt();
+            int maxDiff = in.nextInt();
+            int numFriends = 0;
             
-            long[] values = new long[numValues+1];
+            int[] armies = new int[opponents];
             
-            for(int i=1;i<=numValues;i++){
-                values[i] = in.nextLong();
+            for(int opponent=0;opponent<opponents;opponent++){
+                armies[opponent] = in.nextInt();
+            }
+            int fedorArmy = in.nextInt();
+            
+            for(int i=0;i<opponents;i++){
+                int diffInt = armies[i] ^ fedorArmy;
+                if(countOnes(diffInt) <= maxDiff){
+                    numFriends++;
+                }
             }
             
-            long[][]maxValues = new long[numPairs+1][numValues+1];
-            
-            for(int k=1;k<=numPairs;k++){
-                long rollingSum = 0;
-                for(int i=1;i<segmentSize;i++){
-                    rollingSum += values[i];
-                }
-                
-                for(int i=segmentSize;i<=numValues;i++){
-                    rollingSum += values[i];
-                    maxValues[k][i] = Math.max(rollingSum + maxValues[k-1][i-segmentSize], maxValues[k][i-1]);
-                    rollingSum -= values[i-segmentSize+1];
-                }
-                
-                //System.out.print(k+": ");
-                //Arrays.stream(maxValues[k]).forEach(s -> System.out.print(s+" "));
-                //System.out.println();
-            }
-            
-            System.out.println(maxValues[numPairs][numValues]);
+            System.out.println(numFriends);
         }
+    }
+    
+    static int countOnes(int i){
+        int counter = 0;
+        while(i > 0){
+            if((i&0x1) == 0x1){
+                counter++;
+            }
+            i=i>>1;
+        }
+        
+        return counter;
     }
     
     static class InputReader {
