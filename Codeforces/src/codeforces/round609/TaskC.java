@@ -1,9 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package codeforces;
+package codeforces.round609;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -14,8 +9,8 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.StringTokenizer;
 
-public class Template {
-    static boolean print = false;
+
+public class TaskC {
     public static void main(String[] args) {
         InputStream inputStream;
         String str = null;
@@ -33,24 +28,36 @@ public class Template {
         out.close();
     }
     
-    private static void println(Object s){
-        if(print){
-            System.out.println(s.toString());
-        }
-    }    
-    private static void println(){
-        if(print){
-            System.out.println();
-        }
-    }
-    private static void print(Object s){
-        if(print){
-            System.out.println(s.toString());
-        }
-    }
+
     static class Solver {
         public void solve(int testNumber, InputReader in, PrintWriter out) {
+            int numServers = in.nextInt();
+            int[] taskCount = new int[numServers];
+            long numSeconds = 0;
             
+            long sum =0;
+            for(int i=0;i<numServers;i++){
+                taskCount[i] = in.nextInt();
+                sum += taskCount[i];
+            }
+            
+            long min = sum/numServers;
+            
+            long above = 0;
+            long below = 0;
+            
+            for(int i=0;i<numServers;i++){
+                if(taskCount[i] < min){
+                    below += min - taskCount[i];
+                }else if(taskCount[i] > min+1){
+                    above += taskCount[i] - (min+1);
+                }
+            }
+            
+            numSeconds += below;
+            above  = Math.max(0, above-below);
+            numSeconds += above;
+            System.out.println(numSeconds);
         }
     }
     

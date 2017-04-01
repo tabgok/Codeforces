@@ -1,9 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package codeforces;
+package codeforces.round609;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -14,8 +9,8 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.StringTokenizer;
 
-public class Template {
-    static boolean print = false;
+
+public class TaskB {
     public static void main(String[] args) {
         InputStream inputStream;
         String str = null;
@@ -33,24 +28,30 @@ public class Template {
         out.close();
     }
     
-    private static void println(Object s){
-        if(print){
-            System.out.println(s.toString());
-        }
-    }    
-    private static void println(){
-        if(print){
-            System.out.println();
-        }
-    }
-    private static void print(Object s){
-        if(print){
-            System.out.println(s.toString());
-        }
-    }
+
     static class Solver {
         public void solve(int testNumber, InputReader in, PrintWriter out) {
+            int numBooks = in.nextInt();
+            int numGenres = in.nextInt();
+            int[] bookGenres = new int[numBooks];
+            int[] genreCount = new int[numGenres];
+            for(int i=0;i<numBooks;i++){
+                int nextGenre = in.nextInt();
+                bookGenres[i] = nextGenre;
+                genreCount[nextGenre-1]++;
+            }
             
+            long numWays = 0;
+            
+            
+            
+            for(int i=0;i<numGenres;i++){
+                for(int j=i+1;j<numGenres;j++){
+                    numWays += genreCount[i]*genreCount[j];
+                }
+            }
+            
+            System.out.println(numWays);
         }
     }
     

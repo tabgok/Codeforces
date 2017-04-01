@@ -1,9 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package codeforces;
+package codeforces.round609;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -12,10 +7,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
-public class Template {
-    static boolean print = false;
+
+public class TaskA {
     public static void main(String[] args) {
         InputStream inputStream;
         String str = null;
@@ -33,24 +29,27 @@ public class Template {
         out.close();
     }
     
-    private static void println(Object s){
-        if(print){
-            System.out.println(s.toString());
-        }
-    }    
-    private static void println(){
-        if(print){
-            System.out.println();
-        }
-    }
-    private static void print(Object s){
-        if(print){
-            System.out.println(s.toString());
-        }
-    }
+
     static class Solver {
         public void solve(int testNumber, InputReader in, PrintWriter out) {
+            int numDrives = in.nextInt();
+            int fileSize = in.nextInt();
             
+            int[] drives = new int[numDrives];
+            
+            for(int i=0;i<numDrives;i++){
+                drives[i] = in.nextInt();
+            }
+            
+            Arrays.sort(drives);
+            
+            int sum = 0;
+            int i=numDrives-1;
+            while(sum < fileSize){
+                sum += drives[i--];
+            }
+            
+            System.out.println(numDrives-i-1);
         }
     }
     

@@ -9,11 +9,13 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
 
 
 public class TaskD {
+    static boolean print = false;
     public static void main(String[] args) {
         InputStream inputStream;
         String str = null;
@@ -38,203 +40,198 @@ public class TaskD {
             String[] words = new String[numWords];
             HashMap<String, Synonym> synonyms = new HashMap<>();
             
-            for(int word=0;word<numWords;word++){
-                words[word] = in.next().toLowerCase();
-                if(!synonyms.containsKey(words[word])){
-                    synonyms.put(words[word], new Synonym(words[word]));
+            for(int word =0;word<numWords;word++){
+                String w = in.next().toLowerCase();
+                words[word] = w;
+                if(!synonyms.containsKey(w)){
+                    synonyms.put(w, new Synonym(w));
                 }
             }
-            
+            //Create the graph
             int numPairs = in.nextInt();
-            
-            //Read in the synonyms and created a bi-directional graph (parent/child)
             for(int pair=0;pair<numPairs;pair++){
-                String word = in.next().toLowerCase();
-                String synonym = in.next().toLowerCase();
+                String parent = in.next().toLowerCase();
+                String child = in.next().toLowerCase();
                 
-                if(!synonyms.containsKey(word)){
-                    synonyms.put(word, new Synonym(word));
+                if(!synonyms.containsKey(parent)){
+                    synonyms.put(parent, new Synonym(parent));
                 }
                 
-                if(!synonyms.containsKey(synonym)){
-                    synonyms.put(synonym, new Synonym(synonym));
+                if(!synonyms.containsKey(child)){
+                    synonyms.put(child, new Synonym(child));
                 }
-                
-                if(word.equals(synonym)){ continue; }
-                Synonym s = synonyms.get(synonym);
-                Synonym w = synonyms.get(word);
-                
-                s.parents.add(w);
-                w.children.add(s);
+                if(!child.equals(parent)){
+                    synonyms.get(child).parents.add(synonyms.get(parent));
+                    synonyms.get(parent).children.add(synonyms.get(child)); 
+                }
             }
             
             
             
-            LinkedList<Synonym> visitedOrder = new LinkedList<>();
+            //Find the strongly connected components
+            //print = words[0].equals("r") && words[1].equals("r") && words[2].equals("r") && words[3].equals("r") ;
+            //Go down by children...
+            LinkedList<Synonym> order = new LinkedList<>();
             HashSet<Synonym> visited = new HashSet<>();
+            LinkedList<Synonym> queue = new LinkedList<>();
+            HashMap<Synonym, Iterator> iters = new HashMap<>();
             
-            for(Synonym r : synonyms.values()){
-                LinkedList<Synonym> toVisit = new LinkedList<>();
-                if(visited.contains(r)){continue; }
-                toVisit.add(r);
-                visited.add(r);
-                
-                while(!toVisit.isEmpty()){
-                    Synonym next = toVisit.getFirst();
-                    
-                    //If I am a leaf or the end of a cycle...
-                    if(visited.containsAll(next.children)){
-                        visitedOrder.addFirst(next);
-                        toVisit.removeFirst();
-                        continue;
-                    }
-                    
-                    for(Synonym child : next.children){
-                        if(!visited.contains(child)){
-                            toVisit.addFirst(child);
-                            visited.add(child);
-                        }
-                    }
-                }
-                
-            }
-            
-            //System.out.println(visitedOrder);
-            visited = new HashSet<>();
-            LinkedList<HashSet<Synonym>> connectedSets = new LinkedList<>();
-            
-            for(Synonym s : visitedOrder){
-                LinkedList<Synonym> toVisit = new LinkedList<>();
+            for(Synonym s : synonyms.values()){
                 if(visited.contains(s)){ continue; }
-                //System.out.println(s);
-                toVisit.add(s);
+                queue.add(s);
                 visited.add(s);
-                connectedSets.add(new HashSet<>());
-                connectedSets.getLast().add(s);
-                
-                while(!toVisit.isEmpty()){
-                    Synonym next = toVisit.getFirst();
+                while(!queue.isEmpty()){
+                    Synonym next = queue.getFirst();
                     
-                    boolean added = false;
-                    for(Synonym parent : next.parents){
-                        if(!visited.contains(parent)){
-                            //System.out.println("\t"+parent);
-                            added = true;
-                            visited.add(parent);
-                            toVisit.addFirst(parent);
-                            connectedSets.getLast().add(parent);
-                        }
+                    if(!iters.containsKey(next)){
+                        iters.put(next, next.children.iterator());
                     }
-                    if(added){continue;}
-                    toVisit.removeFirst();
+                    Iterator<Synonym> iter = iters.get(next);
+                    if(iter.hasNext()){
+                        Synonym child = iter.next();
+                        if(!visited.contains(child)){
+                            visited.add(child);
+                            queue.addFirst(child);
+                            continue;
+                        }
+                    }else{
+                        //We have explored all children
+                        order.addFirst(next);
+                        queue.removeFirst();
+                    }
+                    
                 }
             }
             
-            HashMap<Synonym, Synonym> replacements = new HashMap<>();
             
-            for(HashSet<Synonym> s : connectedSets){
-                //System.out.println(s);
+            
+            LinkedList<HashSet<Synonym>> components = new LinkedList<>();
+            visited = new HashSet<>();
+            queue = new LinkedList<>();
+            iters = new HashMap<>();
+            //Then up by parents...
+            for(Synonym s : order){
+                if(visited.contains(s)){ continue; }
+                components.addLast(new HashSet<>());
+                queue.add(s);
+                visited.add(s);
+                while(!queue.isEmpty()){
+                    Synonym next = queue.getFirst();
+                    components.getLast().add(next);
+                    
+                    if(!iters.containsKey(next)){
+                        iters.put(next, next.parents.iterator());
+                    }
+                    Iterator<Synonym> iter = iters.get(next);
+                    if(iter.hasNext()){
+                        Synonym parent = iter.next();
+                        if(!visited.contains(parent)){
+                            queue.addFirst(parent);
+                            visited.add(parent);
+                        }
+                    }else{
+                        queue.removeFirst();
+                    }
+                }
+            }
+            
+            //Convert the nodes into a super node with minimum value
+            for(HashSet<Synonym> h : components){
                 int minSize = Integer.MAX_VALUE;
                 int minRs = Integer.MAX_VALUE;
-                for(Synonym syn : s){
-                    if(syn.minRs < minRs){
-                        minRs = syn.minRs;
-                        minSize = syn.minSize;
-                    }else if(syn.minRs == minRs){
-                        minSize = Math.min(syn.minSize, minSize);
+                
+                for(Synonym s : h){
+                    if(s.minRs < minRs){
+                        minRs = s.minRs;
+                        minSize = s.minSize;
+                    }else if(s.minRs == minRs){
+                        minSize = Math.min(minSize, s.minSize);
                     }
                 }
-                Synonym replacement = s.iterator().next();
-                //System.out.println("The replacement is: " + replacement);
-                for(Synonym syn : s){
-                    replacements.put(syn, replacement);
-                    syn.minSize = minSize;
-                    syn.minRs = minRs;
-                    for(Synonym parent : syn.parents){
-                        parent.children.removeAll(s);
-                        if(parent!=replacement){
-                            replacement.parents.add(parent);
-                            parent.children.add(replacement);
-                        }
-                    }
-                    
-                    for(Synonym child : syn.children){
-                        child.parents.removeAll(s);
-                        if(replacement != child){
-                            replacement.children.add(child);
-                            child.parents.add(replacement);
-                        }
-                    }
+                
+                Synonym replace = h.iterator().next();
+                
+                for(Synonym s : h){
+                    if(s == replace){ continue; }
+                    replace.parents.addAll(s.parents);
+                    replace.children.addAll(s.children);
+                    synonyms.put(s.word, replace);
                 }
-                //System.out.println(s+"\n");
+                replace.children.remove(replace);
+                replace.parents.remove(replace);
             }
             
-            
-            
+            //Now do depth-first search and update
             visited = new HashSet<>();
-            for(Synonym r : synonyms.values()){
-                LinkedList<Synonym> toVisit = new LinkedList<>();
-                if(visited.contains(r)){ continue; }
-                toVisit.add(r);
-                visited.add(r);
+            queue = new LinkedList<>();
+            iters = new HashMap<>();
+            
+            //Update from child on the way down and update parent on the return
+            for(Synonym s : synonyms.values()){
+                if(visited.contains(s)){ continue; }
                 
-                while(!toVisit.isEmpty()){
-                    Synonym next = toVisit.getFirst();
-                    //System.out.println(toVisit);
-                    //System.out.println("\n"+next);
-                    //System.out.println(next.children);
-                    
-                    //If I am a leaf or the end of a cycle...
-                    if(visited.containsAll(next.children)){
-                        for(Synonym parent : next.parents){
-                            if(parent.minRs > next.minRs){
-                                parent.minRs = next.minRs;
-                                parent.minSize = next.minSize;
-                                //System.out.println( parent + " a-> " + next);
-                            }else if(parent.minRs == next.minRs){
-                                parent.minSize = Math.min(next.minSize, parent.minSize);
-                                //System.out.println( parent + " b-> " + next);
-                            }
-                        }
-                        toVisit.removeFirst();
-                        continue;
+                queue.addFirst(s);
+                visited.add(s);
+                while(!queue.isEmpty()){
+                    Synonym next = queue.getFirst();
+                    if(!iters.containsKey(next)){
+                        iters.put(next, next.children.iterator());
                     }
-                    
-                    for(Synonym child : next.children){
+                    Iterator<Synonym> iter = iters.get(next);
+                    if(iter.hasNext()){
+                        Synonym child = iter.next();
                         if(!visited.contains(child)){
-                            toVisit.addFirst(child);
                             visited.add(child);
+                            queue.addFirst(child);                            
                         }else{
-                            if(next.minRs > child.minRs){
+                            if(child.minRs < next.minRs){
                                 next.minRs = child.minRs;
                                 next.minSize = child.minSize;
-                                //System.out.println(next  + " c-> " + child);
-                            }else if(next.minRs == child.minRs){
-                                next.minSize = Math.min(child.minSize, next.minSize);
-                                //System.out.println(next + " d-> " + child);
+                            }else if(child.minRs == next.minRs){
+                                next.minSize = Math.min(next.minSize, child.minSize);
                             }
                         }
-                    }
+                    }else{
+                        queue.removeFirst();
+                        
+                        //Update all the parents
+                        for(Synonym parent : next.parents){
+                            if(next.minRs < parent.minRs){
+                                parent.minRs = next.minRs;
+                                parent.minSize = next.minSize;
+                            }else if(next.minRs == parent.minRs){
+                                parent.minSize = Math.min(parent.minSize, next.minSize);
+                            }
+                        }
+                    }   
                 }
             }
             
-            long numRs = 0;
-            long size = 0;
-            visited.clear();
-            connectedSets.clear();
-            
-            
-            for(String word : words){
-                Synonym w = synonyms.get(word);
-                if(replacements.containsKey(w)){
-                    w = replacements.get(w);
-                }
-                numRs += w.minRs;
-                size += w.minSize;
+            long rCount = 0;
+            long length = 0;
+            for(String w : words){
+                rCount += synonyms.get(w).minRs;
+                length += synonyms.get(w).minSize;
             }
             
-            System.out.println(numRs + " " + size);
             
+            System.out.println(rCount + " " + length);
+        }
+    }
+    private static void println(Object s){
+        if(print){
+            System.out.println(s.toString());
+        }
+    }
+    
+    private static void print(Object s){
+        if(print){
+            System.out.println(s.toString());
+        }
+    }
+    private static void println(){
+        if(print){
+            System.out.println();
         }
     }
     
